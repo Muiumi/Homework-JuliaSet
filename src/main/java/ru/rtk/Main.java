@@ -8,21 +8,25 @@ import java.io.IOException;
 public class Main {
     public static void main(String[] args) {
 
-        int width = 1920;
-        int height = 1080;
+        int width = 4096;
+        int height = 4096;
         double realPart = -0.70176;
         double imaginaryPart = -0.3842;
 
-            // Создание изображения фрактала Жулиа
-            JuliaFractal juliaFractal = new JuliaFractal(width, height, realPart, imaginaryPart);
-            BufferedImage image = juliaFractal.generateFractal();
+        long startTime = System.currentTimeMillis();
+        // Создание изображения фрактала Жулиа
+        JuliaFractal juliaFractal = new JuliaFractal(width, height, realPart, imaginaryPart);
+        BufferedImage image = juliaFractal.generateFractal();
 
-            // Сохранение изображения в файл
-            try {
-                File output = new File("output/fractal.png");
-                ImageIO.write(image, "png", output);
-            } catch (IOException e) {
-                System.out.println("Ошибка при сохранении изображения: " + e.getMessage());
-            }
+        // Сохранение изображения в файл
+        try {
+            File output = new File("output/fractal.png");
+            ImageIO.write(image, "png", output);
+        } catch (IOException e) {
+            System.out.println("Ошибка при сохранении изображения: " + e.getMessage());
         }
+        long endTime = System.currentTimeMillis(); // Засекаем конечное время выполнения
+        long executionTime = endTime - startTime;
+        System.out.println("Время выполнения: " + executionTime + " миллисекунд");
     }
+}
