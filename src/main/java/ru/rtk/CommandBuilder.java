@@ -13,7 +13,14 @@ public class CommandBuilder {
         this.args = args;
     }
 
-    public void executeCommand() {
+    public void executeCommand(int threadNumber) {
+
+        if (args.length < 6) {
+            throw new RuntimeException("Incorrect arguments. Example: java -jar juliasetgen.jar -d 4096;4096 -c -0.75;0.11 -o 123.png");
+        }
+
+        System.out.println("Generating fractal with threads number: " + threadNumber);
+        long startTime = System.currentTimeMillis();
 
         int image_width = 0;
         int image_height = 0;
@@ -36,16 +43,19 @@ public class CommandBuilder {
                 case "-o" -> outputFileName = args[i + 1];
             }
         }
-        if (image_width == 0 || image_height == 0 || (realPart * imaginaryPart == 0d) || outputFileName == null) {
-            System.out.println("Неправильный ввод аргументов.");
+        if (image_width == 0 || image_height == 0 || (Math.abs(realPart) + Math.abs(imaginaryPart) == 0d) || outputFileName == null) {
+            throw new RuntimeException("Incorrect arguments. Example: java -jar juliasetgen.jar -d 4096;4096 -c -0.75;0.11 -o 123.png");
         } else {
-            JuliaFractal juliaFractal = new JuliaFractal(image_width, image_height, realPart, imaginaryPart);
+            JuliaFractal juliaFractal = new JuliaFractal(image_width, image_height, realPart, imaginaryPart, threadNumber);
             BufferedImage image = juliaFractal.generateFractal();
             try {
-                File output = new File("output/" + outputFileName);
+                File output = new File(outputFileName);
                 ImageIO.write(image, "png", output);
+                long endTime = System.currentTimeMillis();
+                long executionTime = endTime - startTime;
+                System.out.println("Complete with: " + executionTime + " milliseconds");
             } catch (IOException e) {
-                System.out.println("Ошибка при сохранении изображения: " + e.getMessage());
+                System.out.println("Exception while saving image: " + e.getMessage());
             }
         }
 

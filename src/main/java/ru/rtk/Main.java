@@ -3,14 +3,15 @@ package ru.rtk;
 public class Main {
     public static void main(String[] args) {
 
-        long startTime = System.currentTimeMillis();
-
         CommandBuilder commandBuilder = new CommandBuilder(args);
-        commandBuilder.executeCommand();
 
-        long endTime = System.currentTimeMillis();
-        long executionTime = endTime - startTime;
+        // Выполняем генерацию фрактала с одним потоком
+        commandBuilder.executeCommand(1);
 
-        System.out.println("Время выполнения: " + executionTime + " миллисекунд");
+        // Выполняем генерацию фрактала с макс. кол-вом потоков для процессора
+        int maxThreads = Runtime.getRuntime().availableProcessors();
+        commandBuilder.executeCommand(maxThreads);
+
+        System.out.println("Check result image in the same directory as jar-file");
     }
 }
