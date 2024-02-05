@@ -1,32 +1,16 @@
 package ru.rtk;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-
 public class Main {
     public static void main(String[] args) {
 
-        int width = 4096;
-        int height = 4096;
-        double realPart = -0.70176;
-        double imaginaryPart = -0.3842;
-
         long startTime = System.currentTimeMillis();
-        // Создание изображения фрактала Жулиа
-        JuliaFractal juliaFractal = new JuliaFractal(width, height, realPart, imaginaryPart);
-        BufferedImage image = juliaFractal.generateFractal();
 
-        // Сохранение изображения в файл
-        try {
-            File output = new File("output/fractal.png");
-            ImageIO.write(image, "png", output);
-        } catch (IOException e) {
-            System.out.println("Ошибка при сохранении изображения: " + e.getMessage());
-        }
-        long endTime = System.currentTimeMillis(); // Засекаем конечное время выполнения
+        CommandBuilder commandBuilder = new CommandBuilder(args);
+        commandBuilder.executeCommand();
+
+        long endTime = System.currentTimeMillis();
         long executionTime = endTime - startTime;
+
         System.out.println("Время выполнения: " + executionTime + " миллисекунд");
     }
 }

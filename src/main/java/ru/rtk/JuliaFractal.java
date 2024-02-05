@@ -11,8 +11,8 @@ public class JuliaFractal {
     private final int height;
     private final double realPart;
     private final double imaginaryPart;
+
     private final int ITERATIONS = 1000;
-    private final float saturation = 1f;
 
     public JuliaFractal(int width, int height, double realPart, double imaginaryPart) {
         this.width = width;
@@ -32,14 +32,14 @@ public class JuliaFractal {
                 int chunkYStart = i * (height / chunks);
                 int chunkYEnd = (i + 1) * (height / chunks);
 
-                Callable<List<Pixel>> chunk = new JuliaFractalChunk(chunkYStart, chunkYEnd, image);
+                Callable<List<Pixel>> chunk = new JuliaFractalChunk(chunkYStart, chunkYEnd);
                 Future<List<Pixel>> future = executorService.submit(chunk);
                 futures.add(future);
             }
             for (var future : futures) {
                 try {
                     List<Pixel> pixels = future.get();
-                    for (Pixel pixel: pixels) {
+                    for (Pixel pixel : pixels) {
                         image.setRGB(pixel.x(), pixel.y(), pixel.color().getRGB());
                     }
                 } catch (InterruptedException | ExecutionException e) {
@@ -55,12 +55,13 @@ public class JuliaFractal {
 
         private final int chunkYStart;
         private final int chunkYEnd;
-        private final BufferedImage image;
 
-        public JuliaFractalChunk(int chunkYStart, int chunkYEnd, BufferedImage image) {
+        private final float COLOR_SATURATION = 1f;
+        private final float COLOR_BRIGHTNESS = 1f;
+
+        public JuliaFractalChunk(int chunkYStart, int chunkYEnd) {
             this.chunkYStart = chunkYStart;
             this.chunkYEnd = chunkYEnd;
-            this.image = image;
         }
 
         @Override
@@ -85,11 +86,10 @@ public class JuliaFractal {
                         }
                     }
 
-                    float brightness = i < ITERATIONS ? 1f : 0;
                     float hue = (i % 256) / 255.0f;
 
-                    Color color = Color.getHSBColor(hue, saturation, brightness);
-                    pixels.add(new Pixel(x,y,color));
+                    Color color = Color.getHSBColor(hue, COLOR_SATURATION, COLOR_BRIGHTNESS);
+                    pixels.add(new Pixel(x, y, color));
                 }
             }
             return pixels;
